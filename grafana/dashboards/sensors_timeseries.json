@@ -44,7 +44,7 @@
       "targets": [
         {
           "format": "time_series",
-          "rawSql": "SELECT\n  ts AS \"time\",\n  value AS value,\n  sensor AS metric\nFROM sensor_readings\nWHERE $__timeFilter(ts)\n  AND ((\'[[machine]]\' = '' OR \'[[machine]]\' = '{all}') OR machine_id = ANY(string_to_array(\'[[machine]]\', ',')))\n  AND ((\'[[sensor]]\' = '' OR \'[[sensor]]\' = '{all}') OR sensor = ANY(string_to_array(\'[[sensor]]\', ',')))\nORDER BY 1;",
+          "rawSql": "SELECT\n  ts AS \"time\",\n  value AS value,\n  sensor AS metric\nFROM sensor_readings\nWHERE $__timeFilter(ts)\n  AND (('[[machine]]' = '' OR '[[machine]]' = '{all}') OR machine_id = ANY(string_to_array('[[machine]]', ',')))\n  AND (('[[sensor]]' = '' OR '[[sensor]]' = '{all}') OR sensor = ANY(string_to_array('[[sensor]]', ',')))\nORDER BY 1;",
           "refId": "A"
         }
       ],
