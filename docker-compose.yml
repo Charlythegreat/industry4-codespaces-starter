@@ -1,0 +1,40 @@
+services:
+  mosquitto:
+    image: eclipse-mosquitto:2
+    ports:
+      - "1883:1883"
+    volumes:
+      - ./mosquitto:/mosquitto
+    restart: unless-stopped
+
+  timescaledb:
+    image: timescale/timescaledb:latest-pg14
+    environment:
+      - POSTGRES_DB=i40
+      - POSTGRES_USER=i40
+      - POSTGRES_PASSWORD=i40pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - tsdata:/var/lib/postgresql/data
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:11.0.0
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+    depends_on:
+      - timescaledb
+    restart: unless-stopped
+
+volumes:
+  tsdata:
+  grafana:

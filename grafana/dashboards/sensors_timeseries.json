@@ -1,0 +1,60 @@
+{
+  "id": null,
+  "uid": "i40-sensors",
+  "title": "I4.0 - Sensors Overview",
+  "tags": ["i40", "timeseries", "mqtt"],
+  "timezone": "browser",
+  "schemaVersion": 38,
+  "version": 1,
+  "refresh": "5s",
+  "time": { "from": "now-1h", "to": "now" },
+  "templating": {
+    "list": [
+      {
+        "name": "machine",
+        "type": "query",
+        "datasource": {"type": "postgres", "uid": "POSTGRES_DS_UID"},
+        "refresh": 2,
+        "query": "SELECT DISTINCT machine_id AS __text, machine_id AS __value FROM sensor_readings ORDER BY 1;",
+        "label": "Machine",
+        "includeAll": true,
+        "allValue": "",
+        "multi": true
+      },
+      {
+        "name": "sensor",
+        "type": "query",
+        "datasource": {"type": "postgres", "uid": "POSTGRES_DS_UID"},
+        "refresh": 2,
+        "query": "SELECT DISTINCT sensor AS __text, sensor AS __value FROM sensor_readings ORDER BY 1;",
+        "label": "Sensor",
+        "includeAll": true,
+        "allValue": "",
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Sensor values by sensor",
+      "id": 1,
+      "datasource": {"type": "postgres", "uid": "POSTGRES_DS_UID"},
+      "gridPos": {"h": 12, "w": 24, "x": 0, "y": 0},
+      "targets": [
+        {
+          "format": "time_series",
+          "rawSql": "SELECT\n  ts AS \"time\",\n  value AS value,\n  sensor AS metric\nFROM sensor_readings\nWHERE $__timeFilter(ts)\n  AND ((\'[[machine]]\' = '' OR \'[[machine]]\' = '{all}') OR machine_id = ANY(string_to_array(\'[[machine]]\', ',')))\n  AND ((\'[[sensor]]\' = '' OR \'[[sensor]]\' = '{all}') OR sensor = ANY(string_to_array(\'[[sensor]]\', ',')))\nORDER BY 1;",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "legend": { "displayMode": "list", "calcs": ["lastNotNull"] }
+      },
+      "fieldConfig": {
+        "defaults": { "unit": "short" },
+        "overrides": []
+      }
+    }
+  ]
+}
