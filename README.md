@@ -209,7 +209,10 @@ docker exec industry4-codespaces-starter-timescaledb-1 \
   psql -U i40 -d i40 -c "SELECT COUNT(*) FROM sensor_readings;"
 ```
 
-> **NB** : Pour arrêter les services, utilisez `docker compose down` ou `docker compose down -v` pour supprimer également les données.
+> **NB** : Pour arrêter les services, et pour supprimer également les données saisissez la commande suivante dans le bash:
+```bash
+pkill -f uvicorn 2>/dev/null; pkill -f "python -m src" 2>/dev/null; docker compose down; echo "Tous les services arrêtés".
+```
 
 ---
 
